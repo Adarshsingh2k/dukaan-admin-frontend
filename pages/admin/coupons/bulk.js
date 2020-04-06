@@ -10,6 +10,8 @@ import "../../../styles/pages/admin/coupons.scss";
 import Swal from 'sweetalert2';
 import ProductsChooser from "../../../components/ProductsChooser";
 import CheckLogin from "../../../components/CheckLogin";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 class AddBulkCoupons extends React.Component {
 
@@ -28,7 +30,9 @@ class AddBulkCoupons extends React.Component {
         left: 1,
         category: "special_discount",
         active: false,
-        organization_id: null
+        organization_id: null,
+        valid_start: new Date(),
+        valid_end: new Date().setMonth(new Date().getMonth() + 1)
       },
     };
   }
@@ -92,6 +96,18 @@ class AddBulkCoupons extends React.Component {
     })
   }
 
+  setStartDate = (date) => {
+    debugger
+    const queryParams = {...this.state.queryParams}
+    queryParams.valid_start = date
+    this.setState({queryParams})
+   }
+
+  setEndDate = (date) => {
+    const queryParams = {...this.state.queryParams}
+    queryParams.valid_end = date
+    this.setState({queryParams})
+  }
 
   /**
    * Method to handle saving of coupon
@@ -106,12 +122,11 @@ class AddBulkCoupons extends React.Component {
         loading: true
       });
       controller.handleAddBulkCoupons(this.state.queryParams).then((response) => {
-        window.open(response)
         this.setState({
           loading: false
         });
         Swal.fire({
-          title: "Coupon " + this.state.queryParams.code + " added!",
+          title: "Coupons added successfully!",
           type: "success",
           showConfirmButton: true
         });
@@ -250,6 +265,36 @@ class AddBulkCoupons extends React.Component {
                         productsCallback={this.handleProductsChange}
                         multiple={true}
                       />
+                    </FieldWithElement>
+
+                    {/* Start Date */}
+                    <FieldWithElement name={"Validity Start Date"} nameCols={3} elementCols={9}
+                                      elementClassName={"pl-4"}>
+                        <DatePicker
+                            showTimeSelect
+                            timeFormat="HH:mm:ss"
+                            timeIntervals={60}
+                            timeCaption="time"
+                            minDate ={new Date()}
+                            onChange={this.setStartDate}
+                            dateFormat="MMMM d, yyyy h:mm aa"
+                            selected={this.state.queryParams.valid_start}
+                        />
+                    </FieldWithElement>
+
+                    {/* End Date */}
+                    <FieldWithElement name={"Validity End Date"} nameCols={3} elementCols={9}
+                                      elementClassName={"pl-4"}>
+                        <DatePicker
+                            showTimeSelect
+                            timeFormat="HH:mm:ss"
+                            timeIntervals={60}
+                            minDate ={new Date()}
+                            onChange={this.setEndDate}
+                            timeCaption="time"
+                            dateFormat="MMMM d, yyyy h:mm aa"
+                            selected={this.state.queryParams.valid_end}
+                        />
                     </FieldWithElement>
 
                     {/* Mode */}
