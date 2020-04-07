@@ -97,7 +97,6 @@ class AddBulkCoupons extends React.Component {
   }
 
   setStartDate = (date) => {
-    debugger
     const queryParams = {...this.state.queryParams}
     queryParams.valid_start = date
     this.setState({queryParams})
