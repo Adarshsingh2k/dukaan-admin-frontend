@@ -32,7 +32,8 @@ class AddBulkCoupons extends React.Component {
         active: false,
         organization_id: null,
         valid_start: new Date(),
-        valid_end: new Date().setMonth(new Date().getMonth() + 1)
+        valid_end: new Date().setMonth(new Date().getMonth() + 1),
+        extensions: []
       },
     };
   }
@@ -96,6 +97,14 @@ class AddBulkCoupons extends React.Component {
     })
   }
 
+  handleExtensionsChange = (extensions) => {
+    let queryParams = this.state.queryParams;
+    queryParams['extensions'] = extensions;
+    this.setState({
+        queryParams
+    })
+   }
+
   setStartDate = (date) => {
     const queryParams = {...this.state.queryParams}
     queryParams.valid_start = date
@@ -120,6 +129,8 @@ class AddBulkCoupons extends React.Component {
       this.setState({
         loading: true
       });
+      const toSubmit = this.state.queryParams;
+      toSubmit['products'] = [...this.state.queryParams.products, ...this.state.queryParams.extensions]
       controller.handleAddBulkCoupons(this.state.queryParams).then((response) => {
         this.setState({
           loading: false
@@ -264,6 +275,18 @@ class AddBulkCoupons extends React.Component {
                         productsCallback={this.handleProductsChange}
                         multiple={true}
                       />
+                    </FieldWithElement>
+
+                    {/* Extensions */}
+                    <FieldWithElement name={"Extensions"} nameCols={3} elementCols={9}
+                                      elementClassName={"pl-4"}>
+                        <ProductsChooser
+                            productsCallback={this.handleExtensionsChange}
+                            multiple={true}
+                            productType={'extension'}
+                            key={this.state.queryParams.organization_id}
+                            organizationId={this.state.queryParams.organization_id}
+                        />
                     </FieldWithElement>
 
                     {/* Start Date */}
